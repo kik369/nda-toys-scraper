@@ -2,8 +2,8 @@ from os import error
 from bs4 import BeautifulSoup
 import requests
 import json
-import re
 import time
+import re
 
 
 def getProductInfo():
@@ -96,4 +96,4 @@ def getProductInfo():
         json.dump(tags, f)
 
 
-getProductInfo()
+# getProductInfo()

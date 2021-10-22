@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import requests
 import json
 import time
+from scrapeInfo import getProductInfo
 
 startTime = time.time()
 
@@ -60,3 +61,5 @@ def scrapeWebsite():
 
 
 scrapeWebsite()
+
+getProductInfo()
