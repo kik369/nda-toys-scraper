@@ -8,7 +8,6 @@ const csvWriter = createCsvWriter({
     { id: 'productURL', title: 'productURL' },
     { id: 'productImageURL', title: 'productImageURL' },
     { id: 'itemName', title: 'itemName' },
-    { id: 'productDescription', title: 'productDescription' },
     { id: 'productCode', title: 'productCode' },
     { id: 'barCode', title: 'barCode' },
     { id: 'commodityCode', title: 'commodityCode' },

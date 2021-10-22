@@ -2,7 +2,6 @@ from bs4 import BeautifulSoup
 import requests
 import json
 import re
-import unicodedata
 import time
 from time import strftime
 
@@ -38,8 +37,6 @@ for runIterator, url in enumerate(allJsonUrls):
     else:
         itemName = ''
 
-    productDescription = soup.findAll('p')[0]
-
     # productCode = soup.findAll('td')[1]
     if 0 <= 1 < len(soup.findAll('td')):
         productCode = soup.findAll('td')[1]
@@ -62,8 +59,6 @@ for runIterator, url in enumerate(allJsonUrls):
     singleItemInfo['productURL'] = url
     singleItemInfo['productImageURL'] = productImageURL
     singleItemInfo['itemName'] = itemName.text
-    singleItemInfo['productDescription'] = unicodedata.normalize(
-        'NFKD', re.sub('[\n]', '', productDescription.text))
     singleItemInfo['productCode'] = productCode.text
     singleItemInfo['barCode'] = barCode.text
     singleItemInfo['commodityCode'] = re.sub('\D', '', commodityCode.text)
