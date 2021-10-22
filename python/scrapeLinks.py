@@ -13,7 +13,7 @@ all_page_links = set()
 all_links = set()
 
 
-def add_links_to_list(url):
+def crawler(url):
     all_links.add(url)
     print(
         f'{time.strftime("%H:%M:%S",  time.gmtime(time.time() - startTime))} | Products: {len(all_product_links)} | Pages: {len(all_page_links)} | URLs: {len(all_links)} | Checking... {url}')
@@ -27,30 +27,36 @@ def add_links_to_list(url):
         for pageTag in pageTags:
             tag = str(pageTag.get('href'))
             if tag not in all_product_links and 'https://www.nda-toys.com/product/' in tag:
-                print(
-                    f'Adding... {tag}')
+                print(f'Adding... {tag}')
                 all_product_links.add(tag)
                 all_links.add(tag)
 
             elif 'page=' in tag and tag not in all_page_links:
                 print(f'Page... {tag}')
                 all_page_links.add(tag)
-                all_links.add(tag)
-                add_links_to_list(tag)
+                # all_links.add(tag)
+                crawler(tag)
 
             elif tag not in all_links and 'https://www.nda-toys.com/' in tag and 'sort=' not in tag and '?f' not in tag and '.jpg' not in tag:
                 all_links.add(tag)
-                add_links_to_list(tag)
+                crawler(tag)
 
     except:
         print(f'{error} in url {url}, tag {tag}')
 
 
-add_links_to_list(url)
+def scrapeWebsite():
 
-all_product_links = list(all_product_links)
+    global all_product_links, all_page_links, all_links
 
-with open('links.json', 'w') as f:
-    json.dump(all_product_links, f)
+    crawler(url)
 
-print(f'Products: {len(all_product_links)}. Pages: {len(all_page_links)}. URLs checked: {len(all_links)} in {time.strftime("%H:%M:%S",  time.gmtime(time.time() - startTime))}')
+    all_product_links = list(all_product_links)
+
+    with open('links.json', 'w') as f:
+        json.dump(all_product_links, f)
+
+    print(f'Products: {len(all_product_links)}. Pages: {len(all_page_links)}. URLs checked: {len(all_links)} in {time.strftime("%H:%M:%S",  time.gmtime(time.time() - startTime))}')
+
+
+scrapeWebsite()
