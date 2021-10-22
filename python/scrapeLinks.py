@@ -3,11 +3,10 @@ from bs4 import BeautifulSoup
 import requests
 import json
 import time
-from time import strftime
 
 startTime = time.time()
 
-urls = ['https://www.nda-toys.com/']
+url = 'https://www.nda-toys.com/'
 
 all_product_links = set()
 all_page_links = set()
@@ -47,8 +46,7 @@ def add_links_to_list(url):
         print(f'{error} in url {url}, tag {tag}')
 
 
-for url in urls:
-    add_links_to_list(url)
+add_links_to_list(url)
 
 all_product_links = list(all_product_links)
 
