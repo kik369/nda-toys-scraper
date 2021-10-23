@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import requests
 import json
 import time
+import datetime
 from scrapeInfo import getProductInfo
 
 startTime = time.time()
@@ -54,7 +55,8 @@ def scrapeWebsite():
 
     all_product_links = list(all_product_links)
 
-    with open('links.json', 'w') as f:
+    fileNameTimeStamp = datetime.datetime.today().strftime('%Y-%m-%d-%H-%M-%S')
+    with open(f'output/link-data/links-nda-toys-{fileNameTimeStamp}.json', 'w') as f:
         json.dump(all_product_links, f)
 
     print(f'Products: {len(all_product_links)}. Pages: {len(all_page_links)}. URLs checked: {len(all_links)} in {time.strftime("%H:%M:%S",  time.gmtime(time.time() - startTime))}')
@@ -63,3 +65,15 @@ def scrapeWebsite():
 scrapeWebsite()
 
 getProductInfo()
+
+# datetime.datetime.now().strftime('%H:%M')
+# datetime.datetime.now().isoformat()
+
+# I think the following is the best one
+# datetime.datetime.utcnow().isoformat()
+# '2021-10-23T10:46:36.291865'
+
+# datetime.datetime.utcnow().strftime('%Y-%m-%d-%H-%M-%S')
+
+# tzinfo=datetime.timezone.utc)
+# datetime.datetime.today().strftime('%Y-%m-%d-%H-%M-%S')

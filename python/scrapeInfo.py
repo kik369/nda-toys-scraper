@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import requests
 import json
 import time
+import datetime
 import re
 
 
@@ -92,8 +93,6 @@ def getProductInfo():
         except:
             print(f'Error {error}')
 
-    with open('details.json', 'w') as f:
+    fileNameTimeStamp = datetime.datetime.today().strftime('%Y-%m-%d-%H-%M-%S')
+    with open(f'output/product-data/json/info-nda-toys-{fileNameTimeStamp}.json', 'w') as f:
         json.dump(tags, f)
-
-
-# getProductInfo()
