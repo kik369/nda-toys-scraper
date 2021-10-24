@@ -78,7 +78,7 @@ def getProductInfo():
             singleItemInfo['commodityCode'] = re.sub(
                 '\D', '', commodityCode.text)
             singleItemInfo['packSize'] = re.sub('\D', '', packSize.text)
-            singleItemInfo['rrp'] = re.search('\d[.]\d*', rrp.text).group()
+            singleItemInfo['rrp'] = re.search('\d*[.]\d*', rrp.text).group()
             singleItemInfo['unitPrice'] = re.search(
                 '\d*[.]\d*', unitPrice.text).group()
             singleItemInfo['packPrice'] = re.search(
@@ -96,3 +96,5 @@ def getProductInfo():
     fileNameTimeStamp = datetime.datetime.today().strftime('%Y-%m-%d-%H-%M-%S')
     with open(f'output/product-data/json/info-nda-toys-{fileNameTimeStamp}.json', 'w') as f:
         json.dump(tags, f)
+
+# https://www.nda-toys.com/product/12139/tonka-steel-classics---mighty-dump-wholesale

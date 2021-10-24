@@ -5,6 +5,7 @@ import json
 import time
 import datetime
 from scrapeInfo import getProductInfo
+from jsonToCsv import jsonToCsv
 
 startTime = time.time()
 
@@ -65,6 +66,8 @@ def scrapeWebsite():
 scrapeWebsite()
 
 getProductInfo()
+
+jsonToCsv()
 
 # datetime.datetime.now().strftime('%H:%M')
 # datetime.datetime.now().isoformat()
