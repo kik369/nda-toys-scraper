@@ -96,5 +96,3 @@ def getProductInfo():
     fileNameTimeStamp = datetime.datetime.today().strftime('%Y-%m-%d-%H-%M-%S')
     with open(f'output/product-data/json/info-nda-toys-{fileNameTimeStamp}.json', 'w') as f:
         json.dump(tags, f)
-
-# https://www.nda-toys.com/product/12139/tonka-steel-classics---mighty-dump-wholesale

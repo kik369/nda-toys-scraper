@@ -68,15 +68,3 @@ scrapeWebsite()
 getProductInfo()
 
 jsonToCsv()
-
-# datetime.datetime.now().strftime('%H:%M')
-# datetime.datetime.now().isoformat()
-
-# I think the following is the best one
-# datetime.datetime.utcnow().isoformat()
-# '2021-10-23T10:46:36.291865'
-
-# datetime.datetime.utcnow().strftime('%Y-%m-%d-%H-%M-%S')
-
-# tzinfo=datetime.timezone.utc)
-# datetime.datetime.today().strftime('%Y-%m-%d-%H-%M-%S')
