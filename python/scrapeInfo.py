@@ -154,7 +154,7 @@ def getProductInfo(fileName):
         singleItemInfo['productImageURL'] = productImageURL
         singleItemInfo['itemName'] = itemName.text
         singleItemInfo['productCode'] = productCode.text
-        singleItemInfo['barCode'] = int(barCode.text)
+        singleItemInfo['barCode'] = barCode.text
         singleItemInfo['commodityCode'] = re.sub(
             '\D', '', commodityCode.text)
         singleItemInfo['packSize'] = re.sub(
