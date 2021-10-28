@@ -193,4 +193,4 @@ def jsonToCsv(fileName):
         f'{datetime.datetime.today().strftime("%Y/%m/%d @ %H:%M:%S")} Succesfullt written {len(jsonData)} products to CSV')
 
 
-# jsonToCsv(getProductInfo(writeProductLinksToJson(crawler(url))))
+jsonToCsv(getProductInfo(writeProductLinksToJson(crawler(url))))
