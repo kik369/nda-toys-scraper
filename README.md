@@ -1,6 +1,5 @@
-# nda-toys.com Price Scraper
+# nda-toys.com price scraper
 
 ### To Do
 
-- [x] This is a complete item
-- [ ] This is an incomplete item
+[ ] Add 'in stock' or 'out of stock' for items
