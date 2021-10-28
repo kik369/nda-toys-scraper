@@ -14,7 +14,7 @@ with open(f'output/logs/log-{fileNameTimeStamp}.log', 'w') as logfile:
         filename=f'output/logs/log-{fileNameTimeStamp}.log', level=logging.INFO)
 
 logging.info(
-    f'{datetime.datetime.today().strftime("%Y/%m/%d @ %H:%M:%S")} SEARCHING FOR PRODUCTS ==========')
+    f'{datetime.datetime.today().strftime("%Y/%m/%d @ %H:%M:%S")} SEARCHING FOR PRODUCTS')
 
 url = 'https://www.nda-toys.com/'
 
