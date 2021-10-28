@@ -12,9 +12,9 @@ fileNameTimeStamp = datetime.datetime.today().strftime('%Y-%m-%d')
 with open(f'output/logs/log-{fileNameTimeStamp}.log', 'w') as logfile:
     logging.basicConfig(
         filename=f'output/logs/log-{fileNameTimeStamp}.log', level=logging.INFO)
+
 logging.info(
-    f'START... {datetime.datetime.today().strftime("%Y/%m/%d @ %H:%M:%S")}')
-logging.info('========== SEARCHING FOR PRODUCTS ==========')
+    f'{datetime.datetime.today().strftime("%Y/%m/%d @ %H:%M:%S")} SEARCHING FOR PRODUCTS ==========')
 
 url = 'https://www.nda-toys.com/'
 
@@ -57,33 +57,30 @@ def crawler(url):
 
 def writeProductLinksToJson(all_product_links):
 
-    logging.info('========== WRITING PRODUCT LINKS TO JSON ==========')
+    logging.info(
+        f'{datetime.datetime.today().strftime("%Y/%m/%d @ %H:%M:%S")} WRITING PRODUCT LINKS TO JSON')
 
     all_product_links = list(all_product_links)
 
     fileNameTimeStamp = datetime.datetime.today().strftime('%Y-%m-%d-%H-%M-%S')
-    fileNameTwo = f'links-nda-toys-{fileNameTimeStamp}.json'
-    with open(f'output/link-data/{fileNameTwo}', 'w') as f:
+    fileName = f'links-nda-toys-{fileNameTimeStamp}.json'
+    with open(f'output/link-data/{fileName}', 'w') as f:
         json.dump(all_product_links, f)
 
     logging.info(
-        f'Succesfullt written {len(all_product_links)} product links to JSON')
-    logging.info(fileNameTwo)
+        f'{datetime.datetime.today().strftime("%Y/%m/%d @ %H:%M:%S")} Succesfullt written {len(all_product_links)} product links to JSON')
 
-    return fileNameTwo
+    return fileName
 
 
 def getProductInfo(fileName):
 
-    logging.info('========== GETTING PRODUCT INFO ==========')
-    logging.info(fileName)
-    logging.info(f'output/link-data/{fileName}')
+    logging.info(
+        f'{datetime.datetime.today().strftime("%Y/%m/%d @ %H:%M:%S")} GETTING PRODUCT INFO')
 
     fPath = f'output/link-data/{fileName}'
-    logging.info(f'{fPath}')
 
     with open(fPath, 'r') as jsonFile:
-        logging.info(jsonFile)
         allJsonUrls = json.load(jsonFile)
 
     singleItemInfo = {}
@@ -160,7 +157,7 @@ def getProductInfo(fileName):
 
         if singleItemInfo not in tags:
             logging.info(
-                f'{runIterator + 1} of {len(allJsonUrls)} {round((runIterator + 1) / len(allJsonUrls) * 100, 2)}% {datetime.datetime.today().strftime("%Y/%m/%d @ %H:%M:%S")} {singleItemInfo["barCode"]} {singleItemInfo["productURL"]}')
+                f'{datetime.datetime.today().strftime("%Y/%m/%d @ %H:%M:%S")} {runIterator + 1} of {len(allJsonUrls)} {round((runIterator + 1) / len(allJsonUrls) * 100, 2)}% {singleItemInfo["productURL"]}')
             tags.append(singleItemInfo)
             singleItemInfo = {}
 
@@ -173,7 +170,8 @@ def getProductInfo(fileName):
 
 
 def jsonToCsv(fileName):
-    logging.info('========== WRITING PRODUCT INFO TO CSV ==========')
+    logging.info(
+        f'{datetime.datetime.today().strftime("%Y/%m/%d @ %H:%M:%S")} WRITING PRODUCT INFO TO CSV')
 
     with open(f'output/product-data/json/{fileName}', 'r') as jsonFile:
         jsonData = json.load(jsonFile)
@@ -191,7 +189,8 @@ def jsonToCsv(fileName):
         for row in jsonData:
             writer.writerow(row)
 
-    logging.info(f'Succesfullt written {len(jsonData)} products to CSV')
+    logging.info(
+        f'{datetime.datetime.today().strftime("%Y/%m/%d @ %H:%M:%S")} Succesfullt written {len(jsonData)} products to CSV')
 
 
 jsonToCsv(getProductInfo(writeProductLinksToJson(crawler(url))))
