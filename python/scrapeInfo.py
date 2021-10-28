@@ -157,7 +157,7 @@ def getProductInfo(fileName):
 
         if singleItemInfo not in tags:
             logging.info(
-                f'{datetime.datetime.today().strftime("%Y/%m/%d @ %H:%M:%S")} {runIterator + 1} of {len(allJsonUrls)} {round((runIterator + 1) / len(allJsonUrls) * 100, 2)}% {singleItemInfo["productURL"]}')
+                f'{datetime.datetime.today().strftime("%Y/%m/%d @ %H:%M:%S")} {runIterator + 1} of {len(allJsonUrls)} {"{:.2f}".format(round((runIterator + 1) / len(allJsonUrls) * 100, 2))} % {singleItemInfo["productURL"]}')
             tags.append(singleItemInfo)
             singleItemInfo = {}
 
@@ -193,4 +193,4 @@ def jsonToCsv(fileName):
         f'{datetime.datetime.today().strftime("%Y/%m/%d @ %H:%M:%S")} Succesfullt written {len(jsonData)} products to CSV')
 
 
-jsonToCsv(getProductInfo(writeProductLinksToJson(crawler(url))))
+# jsonToCsv(getProductInfo(writeProductLinksToJson(crawler(url))))
