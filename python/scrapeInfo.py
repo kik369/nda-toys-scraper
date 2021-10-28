@@ -4,18 +4,16 @@ import json
 import logging
 import re
 import requests
-import time
 from bs4 import BeautifulSoup
-from os import error
 
-startTime = time.time()
 
 fileNameTimeStamp = datetime.datetime.today().strftime('%Y-%m-%d')
 
 with open(f'output/logs/log-{fileNameTimeStamp}.log', 'w') as logfile:
     logging.basicConfig(
         filename=f'output/logs/log-{fileNameTimeStamp}.log', level=logging.INFO)
-
+logging.info(
+    f'START... {datetime.datetime.today().strftime("%Y/%m/%d @ %H:%M:%S")}')
 logging.info('========== SEARCHING FOR PRODUCTS ==========')
 
 url = 'https://www.nda-toys.com/'
@@ -27,36 +25,32 @@ all_links = set()
 
 def crawler(url):
     all_links.add(url)
-    logging.info(f'{time.strftime("%M:%S",  time.gmtime(time.time() - startTime))} | Products: {len(all_product_links)} | Pages: {len(all_page_links)} | URLs: {len(all_links)} | Checking... {url}')
+    logging.info(f'{datetime.datetime.today().strftime("%Y/%m/%d @ %H:%M:%S")} | Products: {len(all_product_links)} | Pages: {len(all_page_links)} | URLs: {len(all_links)} | Checking... {url}')
 
-    try:
-        response = requests.get(url)
-        data = response.text
-        soup = BeautifulSoup(data, 'lxml')
-        pageTags = soup.find_all("a")
+    response = requests.get(url)
+    data = response.text
+    soup = BeautifulSoup(data, 'lxml')
+    pageTags = soup.find_all("a")
 
-        for pageTag in pageTags:
-            tag = str(pageTag.get('href'))
-            if tag not in all_product_links and 'https://www.nda-toys.com/product/' in tag:
-                all_product_links.add(tag)
-                all_links.add(tag)
-                logging.info(
-                    f'{time.strftime("%M:%S",  time.gmtime(time.time() - startTime))} | Products: {len(all_product_links)} | Pages: {len(all_page_links)} | URLs: {len(all_links)} | Product link... {tag}')
+    for pageTag in pageTags:
+        tag = str(pageTag.get('href'))
+        if tag not in all_product_links and 'https://www.nda-toys.com/product/' in tag:
+            all_product_links.add(tag)
+            all_links.add(tag)
+            logging.info(
+                f'{datetime.datetime.today().strftime("%Y/%m/%d @ %H:%M:%S")} | Products: {len(all_product_links)} | Pages: {len(all_page_links)} | URLs: {len(all_links)} | Product link... {tag}')
 
-            elif 'page=' in tag and tag not in all_page_links:
-                all_page_links.add(tag)
-                all_links.add(tag)
-                logging.info(
-                    f'{time.strftime("%M:%S",  time.gmtime(time.time() - startTime))} | Products: {len(all_product_links)} | Pages: {len(all_page_links)} | URLs: {len(all_links)} | New page... {tag}')
+        elif 'page=' in tag and tag not in all_page_links:
+            all_page_links.add(tag)
+            all_links.add(tag)
+            logging.info(
+                f'{datetime.datetime.today().strftime("%Y/%m/%d @ %H:%M:%S")} | Products: {len(all_product_links)} | Pages: {len(all_page_links)} | URLs: {len(all_links)} | New page... {tag}')
 
-                crawler(tag)
+            crawler(tag)
 
-            elif tag not in all_links and 'https://www.nda-toys.com/' in tag and 'sort=' not in tag and '?f' not in tag and '.jpg' not in tag:
-                all_links.add(tag)
-                crawler(tag)
-
-    except:
-        logging.info(f'{error} in url {url}, tag {tag}')
+        elif tag not in all_links and 'https://www.nda-toys.com/' in tag and 'sort=' not in tag and '?f' not in tag and '.jpg' not in tag:
+            all_links.add(tag)
+            crawler(tag)
 
     return all_product_links
 
@@ -80,7 +74,6 @@ def writeProductLinksToJson(all_product_links):
 
 
 def getProductInfo(fileName):
-    startTime = time.time()
 
     logging.info('========== GETTING PRODUCT INFO ==========')
     logging.info(fileName)
@@ -97,7 +90,6 @@ def getProductInfo(fileName):
     tags = []
 
     for runIterator, url in enumerate(allJsonUrls):
-        # try:
         response = requests.get(url)
 
         data = response.text
@@ -168,13 +160,9 @@ def getProductInfo(fileName):
 
         if singleItemInfo not in tags:
             logging.info(
-                f'{runIterator + 1} of {len(allJsonUrls)} {round((runIterator + 1) / len(allJsonUrls) * 100, 2)}% {time.strftime("%M:%S",  time.gmtime(time.time() - startTime))} {singleItemInfo["barCode"]} {singleItemInfo["productURL"]}')
+                f'{runIterator + 1} of {len(allJsonUrls)} {round((runIterator + 1) / len(allJsonUrls) * 100, 2)}% {datetime.datetime.today().strftime("%Y/%m/%d @ %H:%M:%S")} {singleItemInfo["barCode"]} {singleItemInfo["productURL"]}')
             tags.append(singleItemInfo)
             singleItemInfo = {}
-        # except:
-        #     logging.info(f'Error {error}')
-        #     logging.info(f'Error {error.strerror}')
-        #     logging.info(f'Error {error.winerror}')
 
     fileNameTimeStamp = datetime.datetime.today().strftime('%Y-%m-%d-%H-%M-%S')
     fileName = f'info-nda-toys-{fileNameTimeStamp}.json'
