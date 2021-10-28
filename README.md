@@ -2,4 +2,4 @@
 
 ### To Do
 
-[ ] Add 'in stock' or 'out of stock' for items
+- [ ] Add 'in stock' or 'out of stock' for items
