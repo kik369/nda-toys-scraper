@@ -124,7 +124,7 @@ def getProductInfo(fileName):
         rrp = soup.find(string=re.compile("RRP"))
 
         if soup.find("span", {
-                "class": "col-xs-12 col-md-3 col-lg-3"}).findAll("span", {"class": "highlight"}) != None:
+                "class": "col-xs-12 col-md-3 col-lg-3"}) != None:
             unitPrice = soup.find("span", {
                 "class": "col-xs-12 col-md-3 col-lg-3"}).findAll("span", {"class": "highlight"})[0]
         else:
