@@ -117,7 +117,7 @@ def getProductInfo(fileName):
         else:
             imageURL = ''
 
-        if soup.find('h3') != None:
+        if soup.find('h3').find('strong') != None:
             itemName = soup.find('h3').find('strong').text
         else:
             itemName = ''
