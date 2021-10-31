@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 
 
 def currentTime():
-    return datetime.datetime.today().strftime("%Y/%m/%d @ %H:%M:%S")
+    return datetime.datetime.today().strftime('%Y/%m/%d @ %H:%M:%S')
 
 
 fileNameTimeStamp = datetime.datetime.today().strftime('%Y-%m-%d')
@@ -33,7 +33,7 @@ def crawler(url):
     response = requests.get(url)
     data = response.text
     soup = BeautifulSoup(data, 'lxml')
-    pageTags = soup.find_all("a")
+    pageTags = soup.find_all('a')
 
     for pageTag in pageTags:
         tag = str(pageTag.get('href'))
@@ -88,7 +88,7 @@ def toInt(string):
 def toFloat(string):
     string = re.search('\d*[.]\d*', string.text).group()
 
-    return '{:.2f}'.format(string)
+    return '{:.2f}'.format(float(string))
 
 
 def getProductInfo(fileName):
@@ -111,11 +111,11 @@ def getProductInfo(fileName):
 
         soup = BeautifulSoup(data, 'lxml')
 
-        if soup.find("span", {"class": "thumbnail bannerButtonDiv"}) != None:
-            productImageURL = soup.find(
-                "span", {"class": "thumbnail bannerButtonDiv"}).find('img')['src']
+        if soup.find('span', {'class': 'thumbnail bannerButtonDiv'}) != None:
+            imageURL = soup.find(
+                'span', {'class': 'thumbnail bannerButtonDiv'}).find('img')['src']
         else:
-            productImageURL = ''
+            imageURL = ''
 
         if soup.find('h3') != None:
             itemName = soup.find('h3').find('strong').text
@@ -134,34 +134,34 @@ def getProductInfo(fileName):
             commodityCode = soup.findAll('td')[11].text
             commodityCode = toInt(commodityCode)
 
-        packSize = soup.find(string=re.compile("Pack Size"))
+        packSize = soup.find(string=re.compile('Pack Size'))
         packSize = toInt(packSize)
 
-        rrp = soup.find(string=re.compile("RRP"))
+        rrp = soup.find(string=re.compile('RRP'))
         rrp = toFloat(rrp)
 
-        if soup.find("span", {
-                "class": "col-xs-12 col-md-3 col-lg-3"}) != None:
-            unitPrice = soup.find("span", {
-                "class": "col-xs-12 col-md-3 col-lg-3"}).findAll("span", {"class": "highlight"})[0]
+        if soup.find('span', {
+                'class': 'col-xs-12 col-md-3 col-lg-3'}) != None:
+            unitPrice = soup.find('span', {
+                'class': 'col-xs-12 col-md-3 col-lg-3'}).findAll('span', {'class': 'highlight'})[0]
             unitPrice = toFloat(unitPrice)
         else:
             unitPrice = ''
 
-        if soup.find("span", {"class": "col-xs-12 col-md-3 col-lg-3"}) != None:
+        if soup.find('span', {'class': 'col-xs-12 col-md-3 col-lg-3'}) != None:
             packPrice = soup.find(
-                "span", {"class": "col-xs-12 col-md-3 col-lg-3"}).findAll("span", {"class": "highlight"})[1]
+                'span', {'class': 'col-xs-12 col-md-3 col-lg-3'}).findAll('span', {'class': 'highlight'})[1]
             packPrice = toFloat(packPrice)
         else:
             packPrice = ''
 
-        if soup.find("span", {"class": "text-success highlight"}) != None:
+        if soup.find('span', {'class': 'text-success highlight'}) != None:
             inStock = True
         else:
             inStock = False
 
         singleItemInfo['productURL'] = url
-        singleItemInfo['productImageURL'] = productImageURL
+        singleItemInfo['imageURL'] = imageURL
         singleItemInfo['itemName'] = itemName
         singleItemInfo['productCode'] = productCode
         singleItemInfo['barCode'] = barCode
@@ -197,7 +197,7 @@ def jsonToCsv(fileName):
 
     with open(f'output/product-data/csv/info-nda-toys-{fileNameTimeStamp}.csv', 'w', newline='') as csvFile:
 
-        fieldnames = ['productURL', 'productImageURL', 'itemName', 'productCode',
+        fieldnames = ['productURL', 'imageURL', 'itemName', 'productCode',
                       'barCode', 'commodityCode', 'packSize', 'rrp', 'unitPrice', 'packPrice', 'inStock']
 
         writer = csv.DictWriter(csvFile, fieldnames=fieldnames)
