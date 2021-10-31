@@ -77,18 +77,22 @@ def writeProductLinksToJson(all_product_links):
 
 
 def toInt(string):
-    string = re.sub('\D', '', string)
+    if string != None:
 
-    if string != '':
-        string = int(string)
+        string = re.sub('\D', '', string)
+
+        if string != '':
+            string = int(string)
 
     return string
 
 
 def toFloat(string):
-    string = re.search('\d*[.]\d*', string.text).group()
+    if string != None:
+        string = re.search('\d*[.]\d*', string.text).group()
+        string = '{:.2f}'.format(float(string))
 
-    return '{:.2f}'.format(float(string))
+    return string
 
 
 def getProductInfo(fileName):
