@@ -111,76 +111,78 @@ def getProductInfo(fileName):
     for runIterator, url in enumerate(allJsonUrls):
         response = requests.get(url)
 
-        data = response.text
+        if response.status_code == 200:
 
-        soup = BeautifulSoup(data, 'lxml')
+            data = response.text
 
-        if soup.find('span', {'class': 'thumbnail bannerButtonDiv'}) != None:
-            imageURL = soup.find(
-                'span', {'class': 'thumbnail bannerButtonDiv'}).find('img')['src']
-        else:
-            imageURL = ''
+            soup = BeautifulSoup(data, 'lxml')
 
-        if soup.find('h3').find('strong') != None:
-            itemName = soup.find('h3').find('strong').text
-        else:
-            itemName = ''
+            if soup.find('span', {'class': 'thumbnail bannerButtonDiv'}) != None:
+                imageURL = soup.find(
+                    'span', {'class': 'thumbnail bannerButtonDiv'}).find('img')['src']
+            else:
+                imageURL = ''
 
-        if 1 < len(soup.findAll('td')):
-            productCode = soup.findAll('td')[1].text
-            productCode = toInt(productCode)
+            if soup.find('h3').find('strong') != None:
+                itemName = soup.find('h3').find('strong').text
+            else:
+                itemName = ''
 
-        if 3 < len(soup.findAll('td')):
-            barCode = soup.findAll('td')[3].text
-            barCode = toInt(barCode)
+            if 1 < len(soup.findAll('td')):
+                productCode = soup.findAll('td')[1].text
+                productCode = toInt(productCode)
 
-        if 11 < len(soup.findAll('td')):
-            commodityCode = soup.findAll('td')[11].text
-            commodityCode = toInt(commodityCode)
+            if 3 < len(soup.findAll('td')):
+                barCode = soup.findAll('td')[3].text
+                barCode = toInt(barCode)
 
-        packSize = soup.find(string=re.compile('Pack Size'))
-        packSize = toInt(packSize)
+            if 11 < len(soup.findAll('td')):
+                commodityCode = soup.findAll('td')[11].text
+                commodityCode = toInt(commodityCode)
 
-        rrp = soup.find(string=re.compile('RRP'))
-        rrp = toFloat(rrp)
+            packSize = soup.find(string=re.compile('Pack Size'))
+            packSize = toInt(packSize)
 
-        if soup.find('span', {
-                'class': 'col-xs-12 col-md-3 col-lg-3'}) != None:
-            unitPrice = soup.find('span', {
-                'class': 'col-xs-12 col-md-3 col-lg-3'}).findAll('span', {'class': 'highlight'})[0]
-            unitPrice = toFloat(unitPrice)
-        else:
-            unitPrice = ''
+            rrp = soup.find(string=re.compile('RRP'))
+            rrp = toFloat(rrp)
 
-        if soup.find('span', {'class': 'col-xs-12 col-md-3 col-lg-3'}) != None:
-            packPrice = soup.find(
-                'span', {'class': 'col-xs-12 col-md-3 col-lg-3'}).findAll('span', {'class': 'highlight'})[1]
-            packPrice = toFloat(packPrice)
-        else:
-            packPrice = ''
+            if soup.find('span', {
+                    'class': 'col-xs-12 col-md-3 col-lg-3'}) != None:
+                unitPrice = soup.find('span', {
+                    'class': 'col-xs-12 col-md-3 col-lg-3'}).findAll('span', {'class': 'highlight'})[0]
+                unitPrice = toFloat(unitPrice)
+            else:
+                unitPrice = ''
 
-        if soup.find('span', {'class': 'text-success highlight'}) != None:
-            inStock = True
-        else:
-            inStock = False
+            if soup.find('span', {'class': 'col-xs-12 col-md-3 col-lg-3'}) != None:
+                packPrice = soup.find(
+                    'span', {'class': 'col-xs-12 col-md-3 col-lg-3'}).findAll('span', {'class': 'highlight'})[1]
+                packPrice = toFloat(packPrice)
+            else:
+                packPrice = ''
 
-        singleItemInfo['productURL'] = url
-        singleItemInfo['imageURL'] = imageURL
-        singleItemInfo['itemName'] = itemName
-        singleItemInfo['productCode'] = productCode
-        singleItemInfo['barCode'] = barCode
-        singleItemInfo['commodityCode'] = commodityCode
-        singleItemInfo['packSize'] = packSize
-        singleItemInfo['rrp'] = rrp
-        singleItemInfo['unitPrice'] = unitPrice
-        singleItemInfo['packPrice'] = packSize
-        singleItemInfo['inStock'] = inStock
+            if soup.find('span', {'class': 'text-success highlight'}) != None:
+                inStock = True
+            else:
+                inStock = False
 
-        if singleItemInfo not in tags:
-            logging.info(
-                f'{currentTime()} {runIterator + 1} of {len(allJsonUrls)} {"{:.2f}".format(round((runIterator + 1) / len(allJsonUrls) * 100, 2))}% {singleItemInfo["productURL"]}')
-            tags.append(singleItemInfo)
-            singleItemInfo = {}
+            singleItemInfo['productURL'] = url
+            singleItemInfo['imageURL'] = imageURL
+            singleItemInfo['itemName'] = itemName
+            singleItemInfo['productCode'] = productCode
+            singleItemInfo['barCode'] = barCode
+            singleItemInfo['commodityCode'] = commodityCode
+            singleItemInfo['packSize'] = packSize
+            singleItemInfo['rrp'] = rrp
+            singleItemInfo['unitPrice'] = unitPrice
+            singleItemInfo['packPrice'] = packPrice
+            singleItemInfo['inStock'] = inStock
+
+            if singleItemInfo not in tags:
+                logging.info(
+                    f'{currentTime()} {runIterator + 1} of {len(allJsonUrls)} {"{:.2f}".format(round((runIterator + 1) / len(allJsonUrls) * 100, 2))}% {singleItemInfo["productURL"]}')
+                tags.append(singleItemInfo)
+                singleItemInfo = {}
 
     fileNameTimeStamp = datetime.datetime.today().strftime('%Y-%m-%d-%H-%M-%S')
     fileName = f'info-nda-toys-{fileNameTimeStamp}.json'
