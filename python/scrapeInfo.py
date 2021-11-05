@@ -91,6 +91,7 @@ def toFloat(string):
     if string != None:
         string = re.search('\d*[.]\d*', string.text).group()
         string = '{:.2f}'.format(float(string))
+        string = float(string)
 
     return string
 
