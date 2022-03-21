@@ -250,4 +250,4 @@ def main():
 
 
 if __name__ == '__main__':
-    raise SystemError(main())
+    raise SystemExit(main())
