@@ -8,27 +8,6 @@ import requests
 from bs4 import BeautifulSoup
 
 
-def main():
-    fileNameTimeStamp = datetime.datetime.today().strftime('%Y-%m-%d')
-    logFile = f'output/logs/log-{fileNameTimeStamp}.log'
-    open(logFile, 'w')
-    logging.basicConfig(filename=logFile, level=logging.INFO)
-
-    logging.info(f'{currentTime()} SEARCHING FOR PRODUCTS')
-
-    url = 'https://www.nda-toys.com/'
-
-    global all_product_links
-    all_product_links = set()
-    global all_page_links
-    all_page_links = set()
-    global all_links
-    all_links = set()
-    crawler(url)
-
-
-
-
 def currentTime():
     return datetime.datetime.today().strftime('%Y/%m/%d @ %H:%M:%S')
 
@@ -88,14 +67,14 @@ def writeProductLinksToJson(all_product_links):
     all_product_links = list(all_product_links)
 
     fileNameTimeStamp = datetime.datetime.today().strftime('%Y-%m-%d-%H-%M-%S')
-    fileName = f'links-nda-toys-{fileNameTimeStamp}.json'
-    with open(f'output/link-data/{fileName}', 'w') as f:
+    file_name = f'links-nda-toys-{fileNameTimeStamp}.json'
+    with open(f'output/link-data/{file_name}', 'w') as f:
         json.dump(all_product_links, f)
 
     logging.info(
         f'{currentTime()} Succesfullt written {len(all_product_links)} product links to JSON')
 
-    return fileName
+    return file_name
 
 
 def toInt(string):
@@ -240,6 +219,35 @@ def jsonToCsv(fileName):
 
 
 # jsonToCsv(getProductInfo(writeProductLinksToJson(crawler(url))))
+
+def set_up_logging():
+    file_name_time_stamp = datetime.datetime.today().strftime('%Y-%m-%d')
+    log_file = f'output/logs/log-{file_name_time_stamp}.log'
+    open(log_file, 'w')
+    logging.basicConfig(filename=log_file, level=logging.INFO)
+
+
+def main():
+    set_up_logging()
+
+    url = 'https://www.nda-toys.com/'
+
+    global all_product_links
+    all_product_links = set()
+    global all_page_links
+    all_page_links = set()
+    global all_links
+    all_links = set()
+
+    logging.info(f'{currentTime()} SEARCHING FOR PRODUCTS')
+
+    all_product_links = crawler(url)
+    file_name = writeProductLinksToJson(all_product_links)
+    file_name = getProductInfo(file_name)
+    jsonToCsv(file_name)
+
+    return 0
+
 
 if __name__ == '__main__':
     raise SystemError(main())
