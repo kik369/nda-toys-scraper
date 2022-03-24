@@ -7,29 +7,28 @@ import re
 import requests
 from bs4 import BeautifulSoup
 
+# global all_product_links
+all_product_links = set()
+# global all_page_links
+all_page_links = set()
+# global all_links
+all_links = set()
 
-def currentTime():
+def d_t_stamp():
     return datetime.datetime.today().strftime('%Y/%m/%d @ %H:%M:%S')
 
+def f_n_t_stamp():
+    return datetime.datetime.today().strftime('%Y-%m-%d-%H-%M-%S')
 
-# fileNameTimeStamp = datetime.datetime.today().strftime('%Y-%m-%d')
-# logFile = f'output/logs/log-{fileNameTimeStamp}.log'
-# open(logFile, 'w')
-# logging.basicConfig(filename=logFile, level=logging.INFO)
-
-# logging.info(f'{currentTime()} SEARCHING FOR PRODUCTS')
-
-# url = 'https://www.nda-toys.com/'
-
-# all_product_links = set()
-# all_page_links = set()
-# all_links = set()
-
+def log_stats_and_url(string, url):
+    logging.info(f'{d_t_stamp()} | '
+    f'Products: {len(all_product_links)} | '
+    f'Pages: {len(all_page_links)} | '
+    f'URLs: {len(all_links)} | {string}... {url}')
 
 def crawler(url):
     all_links.add(url)
-    logging.info(
-        f'{currentTime()} | Products: {len(all_product_links)} | Pages: {len(all_page_links)} | URLs: {len(all_links)} | Checking... {url}')
+    log_stats_and_url('Checking', url)
 
     response = requests.get(url)
     data = response.text
@@ -41,14 +40,12 @@ def crawler(url):
         if tag not in all_product_links and 'https://www.nda-toys.com/product/' in tag:
             all_product_links.add(tag)
             all_links.add(tag)
-            logging.info(
-                f'{currentTime()} | Products: {len(all_product_links)} | Pages: {len(all_page_links)} | URLs: {len(all_links)} | Product link... {tag}')
+            log_stats_and_url('Product link', tag)
 
         elif 'page=' in tag and tag not in all_page_links:
             all_page_links.add(tag)
             all_links.add(tag)
-            logging.info(
-                f'{currentTime()} | Products: {len(all_product_links)} | Pages: {len(all_page_links)} | URLs: {len(all_links)} | New page... {tag}')
+            log_stats_and_url('New page', tag)
 
             crawler(tag)
 
@@ -59,50 +56,44 @@ def crawler(url):
     return all_product_links
 
 
-def writeProductLinksToJson(all_product_links):
-
+def write_product_links_to_json(all_product_links):
     logging.info(
-        f'{currentTime()} WRITING PRODUCT LINKS TO JSON')
-
+        f'{d_t_stamp()} WRITING PRODUCT LINKS TO JSON')
     all_product_links = list(all_product_links)
-
-    fileNameTimeStamp = datetime.datetime.today().strftime('%Y-%m-%d-%H-%M-%S')
-    file_name = f'links-nda-toys-{fileNameTimeStamp}.json'
+    file_name_time_stamp = f_n_t_stamp()
+    file_name = f'links-nda-toys-{file_name_time_stamp}.json'
     with open(f'output/link-data/{file_name}', 'w') as f:
         json.dump(all_product_links, f)
 
     logging.info(
-        f'{currentTime()} Succesfullt written {len(all_product_links)} product links to JSON')
+        f'{d_t_stamp()} Succesfullt written {len(all_product_links)} product links to JSON')
 
     return file_name
 
 
-def toInt(string):
+def str_to_int(string):
+    """replaces non digits (\D) with an empty string and returns an int"""
     if string != None:
-
         string = re.sub('\D', '', string)
-
         if string != '':
             string = int(string)
-
     return string
 
 
-def toFloat(string):
+def str_to_float(string):
     if string != None:
         string = re.search('\d*[.]\d*', string.text).group()
         string = '{:.2f}'.format(float(string))
         string = float(string)
-
     return string
 
 
-def getProductInfo(fileName):
+def get_product_info(file_name):
 
     logging.info(
-        f'{currentTime()} GETTING PRODUCT INFO')
+        f'{d_t_stamp()} GETTING PRODUCT INFO')
 
-    fPath = f'output/link-data/{fileName}'
+    fPath = f'output/link-data/{file_name}'
 
     with open(fPath, 'r') as jsonFile:
         allJsonUrls = json.load(jsonFile)
@@ -132,34 +123,34 @@ def getProductInfo(fileName):
 
             if 1 < len(soup.findAll('td')):
                 productCode = soup.findAll('td')[1].text
-                productCode = toInt(productCode)
+                productCode = str_to_int(productCode)
 
             if 3 < len(soup.findAll('td')):
                 barCode = soup.findAll('td')[3].text
-                barCode = toInt(barCode)
+                barCode = str_to_int(barCode)
 
             if 11 < len(soup.findAll('td')):
                 commodityCode = soup.findAll('td')[11].text
-                commodityCode = toInt(commodityCode)
+                commodityCode = str_to_int(commodityCode)
 
             packSize = soup.find(string=re.compile('Pack Size'))
-            packSize = toInt(packSize)
+            packSize = str_to_int(packSize)
 
             rrp = soup.find(string=re.compile('RRP'))
-            rrp = toFloat(rrp)
+            rrp = str_to_float(rrp)
 
             if soup.find('span', {
                     'class': 'col-xs-12 col-md-3 col-lg-3'}) != None:
                 unitPrice = soup.find('span', {
                     'class': 'col-xs-12 col-md-3 col-lg-3'}).findAll('span', {'class': 'highlight'})[0]
-                unitPrice = toFloat(unitPrice)
+                unitPrice = str_to_float(unitPrice)
             else:
                 unitPrice = ''
 
             if soup.find('span', {'class': 'col-xs-12 col-md-3 col-lg-3'}) != None:
                 packPrice = soup.find(
                     'span', {'class': 'col-xs-12 col-md-3 col-lg-3'}).findAll('span', {'class': 'highlight'})[1]
-                packPrice = toFloat(packPrice)
+                packPrice = str_to_float(packPrice)
             else:
                 packPrice = ''
 
@@ -182,28 +173,28 @@ def getProductInfo(fileName):
 
             if singleItemInfo not in tags:
                 logging.info(
-                    f'{currentTime()} {runIterator + 1} of {len(allJsonUrls)} {"{:.2f}".format(round((runIterator + 1) / len(allJsonUrls) * 100, 2))}% {singleItemInfo["productURL"]}')
+                    f'{d_t_stamp()} {runIterator + 1} of {len(allJsonUrls)} {"{:.2f}".format(round((runIterator + 1) / len(allJsonUrls) * 100, 2))}% {singleItemInfo["productURL"]}')
                 tags.append(singleItemInfo)
                 singleItemInfo = {}
 
-    fileNameTimeStamp = datetime.datetime.today().strftime('%Y-%m-%d-%H-%M-%S')
-    fileName = f'info-nda-toys-{fileNameTimeStamp}.json'
-    with open(f'output/product-data/json/{fileName}', 'w') as f:
+    file_name_time_stamp = f_n_t_stamp()
+    file_name = f'info-nda-toys-{file_name_time_stamp}.json'
+    with open(f'output/product-data/json/{file_name}', 'w') as f:
         json.dump(tags, f)
 
-    return fileName
+    return file_name
 
 
 def jsonToCsv(fileName):
     logging.info(
-        f'{currentTime()} WRITING PRODUCT INFO TO CSV')
+        f'{d_t_stamp()} WRITING PRODUCT INFO TO CSV')
 
     with open(f'output/product-data/json/{fileName}', 'r') as jsonFile:
         jsonData = json.load(jsonFile)
 
-    fileNameTimeStamp = datetime.datetime.today().strftime('%Y-%m-%d-%H-%M-%S')
+    file_name_time_stamp = f_n_t_stamp()
 
-    with open(f'output/product-data/csv/info-nda-toys-{fileNameTimeStamp}.csv', 'w', newline='') as csvFile:
+    with open(f'output/product-data/csv/info-nda-toys-{file_name_time_stamp}.csv', 'w', newline='') as csvFile:
 
         fieldnames = ['productURL', 'imageURL', 'itemName', 'productCode',
                       'barCode', 'commodityCode', 'packSize', 'rrp', 'unitPrice', 'packPrice', 'inStock']
@@ -215,7 +206,7 @@ def jsonToCsv(fileName):
             writer.writerow(row)
 
     logging.info(
-        f'{currentTime()} Succesfullt written {len(jsonData)} products to CSV')
+        f'{d_t_stamp()} Succesfullt written {len(jsonData)} products to CSV')
 
 
 # jsonToCsv(getProductInfo(writeProductLinksToJson(crawler(url))))
@@ -232,18 +223,11 @@ def main():
 
     url = 'https://www.nda-toys.com/'
 
-    global all_product_links
-    all_product_links = set()
-    global all_page_links
-    all_page_links = set()
-    global all_links
-    all_links = set()
-
-    logging.info(f'{currentTime()} SEARCHING FOR PRODUCTS')
+    logging.info(f'{d_t_stamp()} SEARCHING FOR PRODUCTS')
 
     all_product_links = crawler(url)
-    file_name = writeProductLinksToJson(all_product_links)
-    file_name = getProductInfo(file_name)
+    file_name = write_product_links_to_json(all_product_links)
+    file_name = get_product_info(file_name)
     jsonToCsv(file_name)
 
     return 0
